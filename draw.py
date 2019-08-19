@@ -6,6 +6,7 @@
 #    --data_type为训练所用的数据类型(real代表真实数据，synt代表合成数据)，输入格式为--data_type=real,synt
 
 #    当可以运行两机八卡时，请将代码被注释的部分取消注释
+#    不同模型的日志提取只需要在read_one_file与throughput_average中相应特性即可
 
 
 
@@ -44,11 +45,11 @@ def read_one_file(tool,model,filename):
                 if r"total images/sec:" in l:
                     num = l.split(':')[-1].strip()
             return float(num)
-        if model=='':
-
-    if tool=='mxnet':
-
-    if tool=='pytorch':
+    #     if model=='':
+    #
+    # if tool=='mxnet':
+    #
+    # if tool=='pytorch':
 
 
 
@@ -57,13 +58,19 @@ def throughput_average(tool,model,logdir):
     # 计算平均吞吐率
     # 输入日志路径
     # 返回平均吞吐率
-    num_files = len(os.listdir(logdir))
-    sum = 0
-    for i in range(1, num_files + 1):
-        logtxt = os.path.join(logdir, str(i) + '.log')
-        sum += read_one_file(tool,model,logtxt)
-    avg = sum / num_files
-    return int(avg)
+    if tool=='tensorflow':
+        if model=='alexnet'or model=='resnet50'or model=='vgg16' or model=='inception3'or model=='yolov3':
+            num_files = len(os.listdir(logdir))
+            sum = 0
+            for i in range(1, num_files + 1):
+                logtxt = os.path.join(logdir, str(i) + '.log')
+                sum += read_one_file(tool, model, logtxt)
+            avg = sum / num_files
+            return int(avg)
+    #    if model=='':
+    # if tool=='mxnet':
+    #
+    # if tool=='pytorch':
 
 
 def speed_up(model_avg):
